@@ -21,7 +21,9 @@ def main():
             else:
                 mainlist.extend(get_episode_values(main_requests(url, endpoint, x)))
         
-        excel_export(mainlist,endpoint)
+        #excel_export(mainlist,endpoint)
+        db = get_sql_table(endpoint, mainlist)
+        get_sql_values(mainlist,db.conn, endpoint)
 
    
 def main_requests(url, endpoint, x):
@@ -76,22 +78,22 @@ def get_episode_values(response):
     return eplist
 
 
-# def get_sql_table(endpoint, mainlist):
-#     all_keys = set().union(*(d.keys() for d in mainlist))
-#     columns = " ,".join(list(all_keys))
-#     db = Database('Rick and Morty')
-#     db.create_table(f'''CREATE TABLE {endpoint} ({columns})''')
-#     return db
+def get_sql_table(endpoint, mainlist):
+    all_keys = set().union(*(d.keys() for d in mainlist))
+    columns = " ,".join(list(all_keys))
+    db = Database('Rick and Morty')
+    db.create_table(f'''CREATE TABLE {endpoint} ({columns})''')
+    return db
 
 
-# def get_sql_values(mainlist, db, endpoint):
-#     df = pd.DataFrame(mainlist)
-#     df.to_sql(endpoint, db, if_exists='replace',index=False)
-
-def excel_export(mainlist, endpoint):
-    
+def get_sql_values(mainlist, db, endpoint):
     df = pd.DataFrame(mainlist)
-    df.to_excel(f'{endpoint}.xlsx',index=False)
+    df.to_sql(endpoint, db, if_exists='replace',index=False)
+
+# def excel_export(mainlist, endpoint):
+    
+#     df = pd.DataFrame(mainlist)
+#     df.to_excel(f'{endpoint}.xlsx',index=False)
     
 
 if __name__ == '__main__':    
